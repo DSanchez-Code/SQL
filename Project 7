@@ -1,0 +1,116 @@
+-- Use Northwind Database
+
+-- 1. Find any products that have not appeared on an order, ever. (LEFT JOIN, WHERE IS NULL)
+
+SELECT         Products.ProductID,
+               Products.ProductName
+FROM           Products
+   LEFT JOIN   [Order Details] ON Products.ProductID = [Order Details].[ProductID]
+   WHERE       [Order Details].ProductID IS NULL
+ORDER BY       Products.ProductID
+
+-- 2. Find any products that have not appeared on an order in 1996. (subquery with NOT IN)
+
+SELECT         Products.ProductID,
+               Products.ProductName
+FROM           Products
+WHERE          Products.ProductID NOT IN
+               (SELECT [Order Details].ProductID
+               FROM  [Order Details] JOIN Orders ON [Order Details].OrderID = Orders.OrderID
+               WHERE YEAR(Orders.OrderDate) IN ('1996'))
+ORDER BY       Products.ProductID
+
+-- 3. Find any customers who have not placed an order, ever (similar to #1).
+
+SELECT         Customers.CustomerID  AS [Customer ID],
+               Customers.CompanyName AS [CompanyName],
+               Orders.CustomerID     AS [Orders]
+FROM           Customers
+   LEFT JOIN   Orders ON Customers.CustomerID = Orders.CustomerID
+   WHERE       Orders.CustomerID IS NULL
+ORDER BY       Customers.CustomerID
+
+-- 4. Find any customers that did not place an order in 1996 (similar to #2).
+
+SELECT         Customers.CustomerID  AS [Customer ID],
+               Customers.CompanyName AS [Company Name]
+FROM           Customers
+WHERE          Customers.CustomerID NOT IN
+               (SELECT Orders.CustomerID
+               FROM  Orders
+               WHERE YEAR(Orders.OrderDate) IN ('1996'))
+ORDER BY       Customers.CustomerID
+
+-- 5. List all products that have been sold (any date).
+-- We need this to run fast, and we don't really want to see anything from the [order details] table, so use EXISTS.
+
+SELECT DISTINCT   Products.ProductID   AS [Product ID],
+                  Products.ProductName AS [Product Name]
+FROM              Products
+      JOIN        [Order Details] ON Products.ProductID = [Order Details].ProductID
+      WHERE       [Order Details].[OrderID] IS NOT NULL
+ORDER BY          Products.ProductID
+
+-- 6. Give all details of all the above-average priced products. (simple subquery)
+
+SELECT   *
+FROM     Products
+WHERE    UnitPrice >
+         (SELECT AVG(UnitPrice)
+         FROM Products)
+ORDER BY ProductID
+
+-- 7. Find all orders where the ShipName has non-ASCII characters in it (trick: WHERE shipname <> CAST(ShipName AS VARCHAR).
+
+SELECT   OrderID,
+         ShipName
+FROM     Orders
+WHERE    ShipName <> CAST(ShipName AS VARCHAR)
+ORDER BY OrderID
+
+-- 8. Show all Customers' CompanyName and region. Replace any NULL region with the word 'unknown'.
+-- Use the ISNULL() function. (Do a search on SQL ISNULL)
+
+SELECT   CompanyName,
+         ISNULL(Region, 'unknown') AS [Region]
+FROM     Customers
+ORDER BY CompanyName
+
+-- 9. We need to know a list of customers (companyname) who paid more than $100 for freight on an order in 1996 (based on orderdate).
+-- Use the ANY operator to get this list. (We are expecting this to have to run often on billions of records.
+-- This could be done much less efficiently with a JOIN and DISTINCT.)
+
+SELECT   DISTINCT (Customers.CompanyName) AS [Company Name]
+FROM     Customers
+   JOIN  Orders ON Customers.CustomerID = Orders.CustomerID
+WHERE    100.0 < ANY (SELECT Freight
+                 FROM   Orders
+                 WHERE  Orders.CustomerID = Customers.CustomerID
+                 AND YEAR(OrderDate) = 1996)
+      AND        YEAR(Orders.Orderdate) = 1996
+ORDER BY Customers.CompanyName
+
+-- 10. We want to know a list of customers (companyname) who paid more than $100 for freight on all of their orders in 1996 (based on orderdate).
+-- Use the ALL operator. (We are expecting this to have to run often on billions of records.
+-- This could be done much less efficiently using COUNTs.)
+
+SELECT   Customers.CompanyName  AS [Company Name]
+FROM     Customers
+   JOIN  Orders ON Customers.CustomerID = Orders.CustomerID
+WHERE    100.0 < ALL (SELECT Freight
+                      FROM   Orders
+                      WHERE  Orders.CustomerID = Customers.CustomerID
+                         AND YEAR(OrderDate) = 1996
+                      )
+AND YEAR(Orders.Orderdate) = 1996
+ORDER BY Customers.CompanyName
+
+-- 11. Darn! These unicode characters are messing up a downstream system. How bad is the problem?
+-- List all orders where the shipName has characters in it that are not upper case letters A-Z or lower case letters a-z.
+-- Use LIKE to do this. (see the LIKE video, and use '%[^a-zA-Z]%'
+
+SELECT   Orders.OrderID,
+         Orders.ShipName
+FROM     Orders
+WHERE    ShipName LIKE '%[^a-zA-Z]%'
+ORDER BY Orders.OrderID
