@@ -1,7 +1,5 @@
--- Daniel Sanchez
--- Project 3
--- MIS 504: Dr. Douglas Kline
--- Due Date: September 13th, 2020
+-- Use Northwind Database
+
 
 -- 1. Select the ProductID, ProductName, and unitsInStock of all products that have fewer than 5 unitsInStock. Order products by productID.
 
