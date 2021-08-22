@@ -1,7 +1,4 @@
--- Project 1
--- Daniel Sanchez
--- no-table selects
--- Due Date: August 30th, 2020
+-- Use Northwind Database
 
 --1. Show the number 337894 in a one-row, one-column table using SELECT.
 
