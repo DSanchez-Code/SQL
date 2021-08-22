@@ -1,8 +1,5 @@
--- Daniel Sanchez
--- Project 5
--- MIS 504
--- Dr. Stephen Kline
--- Due Date: September 27th, 2020
+-- Use Northwind Database
+
 
 -- 1. Show the Supplier companyname and the count of how many products we get from that supplier. Make sure to count the primary key of the products table. Order by companyname.
 
