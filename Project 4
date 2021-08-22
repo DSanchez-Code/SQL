@@ -1,8 +1,5 @@
--- Daniel Sanchez
--- Project 4
--- MIS 504
--- Dr. Douglas Kline
--- Due Date: September 20th, 2020
+-- Use Northwind Database
+
 
 -- 1. Show the Supplier companyname, then Suppliers.supplierID, then Products.supplierID, then the productname. Order by SupplierID. Use JOIN and verify that the records match up appropriately.
 
