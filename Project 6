@@ -1,8 +1,4 @@
--- Daniel Sanchez
--- Project 6
--- MIS 504
--- Dr. Douglas Kline
--- Due Date: October 4th
+-- Use Northwind Database
 
 -- 1. Show the CategoryName, CategoryDescription, and number of products in each category.
 -- You will have trouble grouping by CategoryDescription, because of its data type.
