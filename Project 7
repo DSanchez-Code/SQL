@@ -1,5 +1,6 @@
 -- Use Northwind Database
 
+
 -- 1. Find any products that have not appeared on an order, ever. (LEFT JOIN, WHERE IS NULL)
 
 SELECT         Products.ProductID,
